@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
+import createMutationsSharer from 'vuex-shared-mutations'
 import SecureLS from 'secure-ls'
 import fire from '../plugins/fire'
 import settings from './modules/settings'
@@ -12,15 +13,27 @@ const fb = require('../../firebaseConfig')
 
 Vue.use(Vuex)
 
+const dataState = createPersistedState({
+  paths: ['lang', 'user', 'app.tasks', 'app.done', 'settings.settings'],
+  storage: {
+    getItem: (key) => ls.get(key),
+    setItem: (key, value) => ls.set(key, value),
+    removeItem: (key) => ls.remove(key)
+  }
+})
+
+const sharedMutation = createMutationsSharer({
+  predicate: ['setUser', 'app/addTask', 'app/addDone', 'app/delTask', 'app/delDone', 'app/updTag']
+})
+
 fb.auth.onAuthStateChanged(user => {
   if (user) {
     store.commit('setUser', user)
     store.commit('setLoad', false)
-    fire.getSettings(user).then(() => console.log('OK'))
-    fire.getTasks(user).then(() => console.log('OK'))
-    fire.getDone(user).finally(() => {
-      setTimeout(() => store.commit('setLoad', true), 1000)
-    })
+    fire.getSettings(user).then()
+    fire.getDone(user).then()
+    fire.getTasks(user).then()
+    setTimeout(() => store.commit('setLoad', true), 1000)
   } else {
     store.commit('setLoad', true)
   }
@@ -30,7 +43,9 @@ export const store = new Vuex.Store({
   state: {
     lang: undefined,
     user: null,
-    load: false
+    load: false,
+    tkn: '',
+    currentTag: {tag: '', color: '#03A9F4'}
   },
   actions: {
     cleanData ({commit}) {
@@ -51,20 +66,19 @@ export const store = new Vuex.Store({
     },
     setLoad: (state, payload) => {
       state.load = payload
+    },
+    setTkn: (state, payload) => {
+      state.tkn = payload
+    },
+    setCurrentTag: (state, payload) => {
+      state.currentTag = payload
     }
   },
   modules: {
     app,
     settings
   },
-  plugins: [createPersistedState({
-    paths: ['lang', 'user', 'tasks', 'done', 'settings'],
-    storage: {
-      getItem: (key) => ls.get(key),
-      setItem: (key, value) => ls.set(key, value),
-      removeItem: (key) => ls.remove(key)
-    }
-  })]
+  plugins: [dataState, sharedMutation]
 })
 
 export default store

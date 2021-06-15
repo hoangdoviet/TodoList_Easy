@@ -1,36 +1,48 @@
 <template>
-    <v-dialog v-model="isDialog" max-width="500">
-        <v-card>
-            <v-card-title class="headline">{{ $t("settings.title") }}</v-card-title>
-            <v-card-text>
-                <div v-if="isAuth">
-                    <p class="headline text-center">
-                        <b class="wave">👋</b>{{ $t("hello") }}, {{ name }}
-                    </p>
-                </div>
-                <div>
-                    <p class="body-1">{{ $t("settings.colorTheme") }}:
-                        <v-tooltip right>
-                            <template v-slot:activator="{ on }">
-                                <v-btn icon v-on="on" @click="change_color()">
-                                    <v-icon v-if="!isDark" color="orange">wb_sunny</v-icon>
-                                    <v-icon v-else>brightness_2</v-icon>
-                                </v-btn>
-                            </template>
-                            <span>{{ $t("settings.tooltip") }}</span>
-                        </v-tooltip>
-                    </p>
-                </div>
-                <div v-if="isAuth">
-                    <v-switch v-model="isShare" :label="$t('settings.isShare')"></v-switch>
-                    <div v-if="isShare">
-                        <p>{{ $t("settings.share") }}: <a :href="url" target="_blank">{{ url }}</a></p>
-                    </div>
-                </div>
-                <v-switch v-model="showBadges" :label="$t('settings.showBadges')"></v-switch>
-            </v-card-text>
-        </v-card>
-    </v-dialog>
+  <v-dialog v-model="isDialog" max-width="500">
+    <v-card>
+      <v-card-title class="headline">{{ $t("settings.title") }}</v-card-title>
+      <v-card-text>
+        <div v-if="isAuth">
+          <p class="headline text-center">
+            <b class="wave">👋</b>{{ $t("hello") }}, {{ name }}
+          </p>
+        </div>
+        <div>
+          <p class="body-1">{{ $t("settings.colorTheme") }}:
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-btn icon v-on="on" @click="change_color()">
+                  <v-icon v-if="!isDark" color="orange">wb_sunny</v-icon>
+                  <v-icon v-else>brightness_2</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ $t("settings.tooltip") }}</span>
+            </v-tooltip>
+          </p>
+        </div>
+        <div v-if="isAuth">
+          <v-switch v-model="isShare" :label="$t('settings.isShare')"></v-switch>
+          <div v-if="isShare">
+            <p>{{ $t("settings.share") }}: <a :href="url" target="_blank">{{ url }}</a>
+              <v-btn
+                  icon
+                  color="primary"
+                  v-clipboard:copy="url"
+                  v-clipboard:success="clipboardSuccess"
+                  v-clipboard:error="clipboardError">
+                <v-icon>mdi-content-copy</v-icon>
+              </v-btn>
+            </p>
+            <v-alert v-if="alert" dense :type="alert">
+              {{ $t(`settings.${alert}Alert`)}}
+            </v-alert>
+          </div>
+        </div>
+        <v-switch v-model="showBadges" :label="$t('settings.showBadges')"></v-switch>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -58,14 +70,9 @@ export default {
     name () {
       return this.user.displayName.split(' ')[0]
     },
-    isLang () {
-      if (i18n.locale === 'ru') { return 'ru' } else {
-        return 'en'
-      }
-    },
     url () {
       if (this.isAuth) {
-        return `${process.env.VUE_APP_DOMAIN}/b/${this.user.uid}`
+        return `${process.env.VUE_APP_DOMAIN}/b/${this.settings.url}`
       } else {
         return 'no'
       }
@@ -95,6 +102,11 @@ export default {
       }
     }
   },
+  data () {
+    return {
+      alert: null
+    }
+  },
   methods: {
     ...mapMutations('settings', ['setSettingsDialog', 'setShowBadges', 'setIsShare']),
     ...mapActions('settings', ['newSettings']),
@@ -106,42 +118,50 @@ export default {
     change_lang (lang) {
       i18n.locale = lang
       this.$store.commit('setLang', lang)
+    },
+    clipboardSuccess () {
+      this.alert = 'success'
+      setTimeout(() => { this.alert = null }, 3000)
+    },
+    clipboardError () {
+      this.alert = 'error'
+      setTimeout(() => { this.alert = null }, 3000)
     }
   }
 }
 </script>
 
 <style scoped>
-    .wave {
-        font-size: 1.5em;
-        margin: 10px;
-        animation-name: wave-animation;
-        animation-duration: 2.5s;
-        animation-iteration-count: infinite;
-        transform-origin: 70% 70%;
-        display: inline-block;
-    }
-    @keyframes wave-animation {
-        0% {
-            transform: rotate(0deg)
-        }
-        10% {
-            transform: rotate(-10deg)
-        }
-        20% {
-            transform: rotate(12deg)
-        }
-        30% {
-            transform: rotate(-10deg)
-        }
-        40% {
-            transform: rotate(9deg)
-        }
-        50% {
-            transform: rotate(0deg)
-        }
-        100% {
-            transform: rotate(0deg)
-        }
-    }
+.wave {
+  font-size: 1.5em;
+  margin: 10px;
+  animation-name: wave-animation;
+  animation-duration: 2.5s;
+  animation-iteration-count: infinite;
+  transform-origin: 70% 70%;
+  display: inline-block;
+}
+@keyframes wave-animation {
+  0% {
+    transform: rotate(0deg)
+  }
+  10% {
+    transform: rotate(-10deg)
+  }
+  20% {
+    transform: rotate(12deg)
+  }
+  30% {
+    transform: rotate(-10deg)
+  }
+  40% {
+    transform: rotate(9deg)
+  }
+  50% {
+    transform: rotate(0deg)
+  }
+  100% {
+    transform: rotate(0deg)
+  }
+}
 </style>

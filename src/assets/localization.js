@@ -1,12 +1,15 @@
 export const messages = {
   vi: {
-    App: 'ToDo',
+    app: 'ToDo',
     start: 'Để đồng bộ hóa danh sách nhiệm vụ, bạn cần đăng nhập',
     hello: 'Xin chào',
     createBy: 'Tạo bởi',
     enterTask: 'Nhập nhiệm vụ ...',
     created: 'Được tạo lúc',
     done: 'Hoàn thành lúc',
+    addTag: 'Thêm thẻ',
+    tagName: 'Tên Thẻ',
+    currentTag: 'Đang xem thẻ: ',
     buttons: {
       add: 'Thêm',
       done: 'Hoàn thành',
@@ -34,7 +37,9 @@ export const messages = {
       tooltip: 'Nhấp để thay đổi',
       isShare: 'Cho phép truy cập vào bảng của bạn?',
       share: 'Bạn có thể chia sẻ hội đồng quản trị của mình',
-      showBadges: 'Hiển thị huy hiệu?'
+      showBadges: 'Hiển thị huy hiệu?',
+      successAlert: 'Sao chép thành công!',
+      errorAlert: 'Có lỗi xảy ra trong quá trình sao chép!!'
     },
     notFound: 'Không tìm thấy trang',
     noAccess: 'Không có quyền truy cập'
@@ -47,6 +52,9 @@ export const messages = {
     enterTask: 'Enter the task...',
     created: 'Created at ',
     done: 'Done at ',
+    addTag: 'Add Tag',
+    tagName: 'Tag Name',
+    currentTag: 'You are viewing this tag: ',
     buttons: {
       add: 'Add',
       done: 'Done',
@@ -74,7 +82,9 @@ export const messages = {
       tooltip: 'Click to change',
       isShare: 'Allow access to your board?',
       share: 'You can share your board',
-      showBadges: 'Show badges?'
+      showBadges: 'Show badges?',
+      successAlert: 'Link copied successfully!',
+      errorAlert: 'An error occurred during copying!'
     },
     notFound: 'Page not found',
     noAccess: 'No access'

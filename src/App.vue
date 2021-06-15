@@ -9,7 +9,7 @@
             <v-spacer></v-spacer>
 
             <v-btn @click.stop="openSettingsDialog" icon>
-                {{ $t("settings.title") }}
+                <v-icon>settings</v-icon>
             </v-btn>
             <v-btn icon @click.stop="helpDialog = true">
                 <v-icon>mdi-help</v-icon>
@@ -37,13 +37,13 @@
                 </v-list>
             </v-menu>
         </v-app-bar>
-        <v-content>
+        <v-main>
             <v-container fluid>
                 <router-view></router-view>
             </v-container>
-        </v-content>
+        </v-main>
         <v-footer app>
-            <span>{{ $t("createdBy") }} <a href="https://github.com/hoangdoviet" target="_blank">HoangDoV</a></span>
+            <span>{{ $t("createBy") }} <a href="https://github.com/hoangdoviet" target="_blank">HoangDoV</a></span>
         </v-footer>
 
         <v-dialog v-model="helpDialog" max-width="400">
